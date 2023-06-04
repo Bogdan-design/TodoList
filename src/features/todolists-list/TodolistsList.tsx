@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect} from 'react'
 import {useSelector} from 'react-redux'
-import {todolistsActions, todolistsThunks} from 'features/todolists-list/todolists/todolists.reducer'
-import {tasksThunks} from 'features/todolists-list/tasks/tasks.reducer'
+import {todolistsThunks} from 'features/todolists-list/todolists/todolists.reducer'
 import {Grid, Paper} from '@mui/material'
 import {AddItemForm} from 'common/components'
 import {Todolist} from './todolists/Todolist/Todolist'
@@ -30,7 +29,7 @@ export const TodolistsList = () => {
     }, [])
 
     const addTodolist = useCallback((title: string) => {
-       return addTodolistThunk(title).unwrap()
+        return addTodolistThunk(title).unwrap()
     }, [])
 
     if (!isLoggedIn) {

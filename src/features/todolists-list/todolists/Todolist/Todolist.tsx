@@ -21,6 +21,7 @@ type Props = {
     tasks: TaskType[]
 }
 
+
 export const Todolist: FC<Props> = memo(({todolist, tasks}) => {
 
     const {fetchTasks, addTask} = useActions(tasksThunks)
