@@ -1,6 +1,13 @@
-import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useCallback, useEffect } from 'react'
+import './App.css'
+import { TodolistsList } from 'features/TodolistsList/TodolistsList'
+import { ErrorSnackbar } from 'components/ErrorSnackbar/ErrorSnackbar'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppRootStateType } from './store'
+import { initializeAppTC, RequestStatusType } from './app-reducer'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { Login } from 'features/auth/Login'
+import { logoutTC } from 'features/auth/auth.reducer'
 import {
 	AppBar,
 	Button,
@@ -12,27 +19,26 @@ import {
 	Typography
 } from '@mui/material';
 import { Menu } from '@mui/icons-material'
-import { Login } from 'features/auth/Login/Login'
-import './App.css'
-import { TodolistsList } from 'features/todolists-list/TodolistsList'
-import { ErrorSnackbar } from 'common/components'
-import { useActions } from 'common/hooks';
+import { useAppDispatch } from 'hooks/useAppDispatch';
 import { selectIsLoggedIn } from 'features/auth/auth.selectors';
-import { selectAppStatus, selectIsInitialized } from 'app/app.selectors';
-import { authThunks } from 'features/auth/auth.reducer';
 
-function App() {
-	const status = useSelector(selectAppStatus)
-	const isInitialized = useSelector(selectIsInitialized)
+type PropsType = {
+	demo?: boolean
+}
+
+function App({demo = false}: PropsType) {
+	const status = useSelector<AppRootStateType, RequestStatusType>((state) => state.app.status)
+	const isInitialized = useSelector<AppRootStateType, boolean>((state) => state.app.isInitialized)
 	const isLoggedIn = useSelector(selectIsLoggedIn)
-
-	const {initializeApp, logout} = useActions(authThunks)
+	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		initializeApp({})
+		dispatch(initializeAppTC())
 	}, [])
 
-	const logoutHandler = () => logout({})
+	const logoutHandler = useCallback(() => {
+		dispatch(logoutTC())
+	}, [])
 
 	if (!isInitialized) {
 		return <div
@@ -59,7 +65,7 @@ function App() {
 				</AppBar>
 				<Container fixed>
 					<Routes>
-						<Route path={'/'} element={<TodolistsList/>}/>
+						<Route path={'/'} element={<TodolistsList demo={demo}/>}/>
 						<Route path={'/login'} element={<Login/>}/>
 					</Routes>
 				</Container>
